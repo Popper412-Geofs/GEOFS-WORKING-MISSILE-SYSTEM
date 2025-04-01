@@ -1,0 +1,2227 @@
+// ==UserScript==
+// @name          Working Missiles for GeoFS Multiplayer (Polling)
+// @namespace     http://tampermonkey.net/
+// @version       1.4
+// @description   Working Missiles for Military Planes in GeoFS with Multiplayer Support
+// @author        Popper412
+// @match         *://www.geo-fs.com/*
+// @grant         none
+// ==/UserScript==
+
+(function() {
+    const serverUrl = "https://your-serverless-api.com/missiles"; // Replace with your API endpoint
+
+    function launchMissile() {
+        // Logic to launch a missile
+        console.log("Missile launched!");
+
+        // Create a missile event
+        const missileEvent = {
+            type: "missile",
+            playerId: generatePlayerId(), // Generate a unique identifier for the player
+            position: getPlayerPosition(), // Replace with a function to get the player's position
+            timestamp: Date.now()
+        };
+
+        // Send the missile event to the server
+        fetch(serverUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(missileEvent)
+        }).then(response => response.json())
+          .then(data => console.log("Missile event sent:", data))
+          .catch(error => console.error("Error sending missile event:", error));
+    }
+
+    function getPlayerPosition() {
+        // Replace with actual logic to get the player's position in GeoFS
+        return { x: Math.random() * 100, y: Math.random() * 100, z: Math.random() * 100 }; // Example position
+    }
+
+    function generatePlayerId() {
+        // Generate a unique player ID (e.g., based on session or random value)
+        return "player-" + Math.floor(Math.random() * 10000);
+    }
+
+    function fetchMissileEvents() {
+        // Fetch missile events from the server
+        fetch(serverUrl)
+            .then(response => response.json())
+            .then(events => {
+                events.forEach(event => {
+                    console.log("Missile event received:", event);
+                    // Add logic to display missile in the game
+                });
+            })
+            .catch(error => console.error("Error fetching missile events:", error));
+    }
+
+    // Poll the server for missile events every 2 seconds
+    setInterval(fetchMissileEvents, 2000);
+
+    // Example: Bind missile launch to a key press
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "m") { // Press '/' to launch a missile
+            launchMissile();
+        }
+    });
+})();
+// ==UserScript==
+// @name          FA-18F Air-to-Air Missiles for GeoFS Multiplayer
+// @namespace     http://tampermonkey.net/
+// @version       1.5
+// @description   FA-18F Air-to-Air Missiles for GeoFS with Multiplayer Support
+// @author        Popper412
+// @match         *://www.geo-fs.com/*
+// @grant         none
+// ==/UserScript==
+
+(function() {
+    const serverUrl = "https://your-serverless-api.com/missiles"; // Replace with your API endpoint
+    const FA18F_MODEL_ID = "fa18f"; // Replace with the actual model ID for the FA-18F in GeoFS
+
+    // Missile configurations
+    const missileTypes = {
+        "AIM-9X Sidewinder": {
+            type: "air-to-air",
+            speed: 850, // Speed in m/s
+            range: 18000, // Range in meters
+            damage: 75, // Damage dealt
+            tracking: true // Heat-seeking missile
+        },
+        "AIM-7 Sparrow": {
+            type: "air-to-air",
+            speed: 800, // Speed in m/s
+            range: 25000, // Range in meters
+            damage: 90, // Damage dealt
+            tracking: true // Semi-active radar homing
+        },
+        "AIM-120 AMRAAM": {
+            type: "air-to-air",
+            speed: 1200, // Speed in m/s
+            range: 37000, // Range in meters
+            damage: 100, // Damage dealt
+            tracking: true // Active radar homing
+        }
+    };
+
+    let selectedMissile = "AIM-9X Sidewinder"; // Default missile type
+
+    function isPlayerFlyingFA18F() {
+        // Replace with actual logic to check if the player is flying the FA-18F
+        const currentPlane = geofs.aircraft.instance.id; // Example: GeoFS aircraft instance
+        return currentPlane === FA18F_MODEL_ID;
+    }
+
+    function launchMissile() {
+        if (!isPlayerFlyingFA18F()) {
+            console.log("You are not flying the FA-18F. Missile launch aborted.");
+            return;
+        }
+
+        const missileConfig = missileTypes[selectedMissile];
+        if (!missileConfig) {
+            console.error("Invalid missile type selected.");
+            return;
+        }
+
+        console.log(`${selectedMissile} launched!`);
+
+        // Create a missile event
+        const missileEvent = {
+            type: missileConfig.type,
+            missileName: selectedMissile,
+            playerId: generatePlayerId(),
+            position: getPlayerPosition(),
+            speed: missileConfig.speed,
+            range: missileConfig.range,
+            damage: missileConfig.damage,
+            tracking: missileConfig.tracking,
+            timestamp: Date.now()
+        };
+
+        // Send the missile event to the server
+        fetch(serverUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(missileEvent)
+        }).then(response => response.json())
+          .then(data => console.log("Missile event sent:", data))
+          .catch(error => console.error("Error sending missile event:", error));
+    }
+
+    function getPlayerPosition() {
+        // Replace with actual logic to get the player's position in GeoFS
+        return { x: Math.random() * 100, y: Math.random() * 100, z: Math.random() * 100 }; // Example position
+    }
+
+    function generatePlayerId() {
+        // Generate a unique player ID (e.g., based on session or random value)
+        return "player-" + Math.floor(Math.random() * 10000);
+    }
+
+    function fetchMissileEvents() {
+        // Fetch missile events from the server
+        fetch(serverUrl)
+            .then(response => response.json())
+            .then(events => {
+                events.forEach(event => {
+                    console.log("Missile event received:", event);
+                    if (event.type === "air-to-air") {
+                        // Add logic to display and track the missile in the game
+                        displayMissile(event);
+                    }
+                });
+            })
+            .catch(error => console.error("Error fetching missile events:", error));
+    }
+
+    function displayMissile(event) {
+        // Logic to display the missile in the game
+        console.log(`Displaying ${event.missileName} at position: ${event.position}`);
+        // Replace with actual rendering logic for GeoFS
+    }
+
+    // Missile selection logic
+    function selectMissile(missileName) {
+        if (missileTypes[missileName]) {
+            selectedMissile = missileName;
+            console.log(`Missile type selected: ${missileName}`);
+        } else {
+            console.error("Invalid missile type selected.");
+        }
+    }
+
+    // Poll the server for missile events every 2 seconds
+    setInterval(fetchMissileEvents, 2000);
+
+    // Example: Bind missile launch to a key press
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "m") { // Press 'm' to launch a missile
+            launchMissile();
+        } else if (event.key === "1") { // Press 'u' to select AIM-9X Sidewinder
+            selectMissile("AIM-9X Sidewinder");
+        } else if (event.key === "2") { // Press '\' to select AIM-7 Sparrow
+            selectMissile("AIM-7 Sparrow");
+        } else if (event.key === "3") { // Press '/' to select AIM-120 AMRAAM
+            selectMissile("AIM-120 AMRAAM");
+        }
+    });
+})();
+function createHealthBar(playerId) {
+    const healthBar = document.createElement("div");
+    healthBar.id = `health-bar-${playerId}`;
+    healthBar.style.position = "absolute";
+    healthBar.style.bottom = "10px";
+    healthBar.style.left = "10px";
+    healthBar.style.width = "200px";
+    healthBar.style.height = "20px";
+    healthBar.style.backgroundColor = "red";
+    healthBar.style.border = "1px solid black";
+    healthBar.style.zIndex = "1000";
+
+    const healthFill = document.createElement("div");
+    healthFill.id = `health-fill-${playerId}`;
+    healthFill.style.width = "100%";
+    healthFill.style.height = "100%";
+    healthFill.style.backgroundColor = "green";
+
+    healthBar.appendChild(healthFill);
+    document.body.appendChild(healthBar);
+}
+
+function updateHealthBar(playerId, health) {
+    const healthFill = document.getElementById(`health-fill-${playerId}`);
+    if (healthFill) {
+        healthFill.style.width = `${health}%`;
+    }
+}
+
+function removeHealthBar(playerId) {
+    const healthBar = document.getElementById(`health-bar-${playerId}`);
+    if (healthBar) {
+        healthBar.remove();
+    }
+}
+function createTargetIndicator() {
+    const indicator = document.createElement("div");
+    indicator.id = "target-indicator";
+    indicator.style.position = "absolute";
+    indicator.style.border = "2px solid red";
+    indicator.style.width = "50px";
+    indicator.style.height = "50px";
+    indicator.style.zIndex = "1000";
+    indicator.style.display = "none"; // Hidden by default
+    document.body.appendChild(indicator);
+}
+
+function updateTargetIndicator(targetPosition) {
+    const indicator = document.getElementById("target-indicator");
+    if (indicator && targetPosition) {
+        // Convert 3D position to 2D screen coordinates (replace with actual logic)
+        const screenPosition = convertToScreenCoordinates(targetPosition);
+        indicator.style.left = `${screenPosition.x}px`;
+        indicator.style.top = `${screenPosition.y}px`;
+        indicator.style.display = "block";
+    }
+}
+
+function hideTargetIndicator() {
+    const indicator = document.getElementById("target-indicator");
+    if (indicator) {
+        indicator.style.display = "none";
+    }
+}
+
+function convertToScreenCoordinates(position) {
+    // Placeholder logic for converting 3D position to 2D screen coordinates
+    return { x: position.x % window.innerWidth, y: position.y % window.innerHeight };
+}
+function createExplosionEffect(position) {
+    const explosion = document.createElement("div");
+    explosion.style.position = "absolute";
+    explosion.style.width = "100px";
+    explosion.style.height = "100px";
+    explosion.style.backgroundColor = "orange";
+    explosion.style.borderRadius = "50%";
+    explosion.style.opacity = "0.8";
+    explosion.style.zIndex = "1000";
+
+    // Convert 3D position to 2D screen coordinates (replace with actual logic)
+    const screenPosition = convertToScreenCoordinates(position);
+    explosion.style.left = `${screenPosition.x - 50}px`; // Center the explosion
+    explosion.style.top = `${screenPosition.y - 50}px`;
+
+    document.body.appendChild(explosion);
+
+    // Remove the explosion after 1 second
+    setTimeout(() => explosion.remove(), 1000);
+}
+// Initialize health bars for all players
+Object.keys(players).forEach(playerId => {
+    createHealthBar(playerId);
+});
+
+// Lock target and update indicator
+function lockTarget() {
+    // ...existing locking logic...
+    if (lockedTarget) {
+        updateTargetIndicator(lockedTarget.position);
+    } else {
+        hideTargetIndicator();
+    }
+}
+
+// Handle missile hit
+function handleMissileEvent(event) {
+    if (event.targetId === generatePlayerId()) {
+        const damage = event.damage;
+        players[event.targetId].health -= damage;
+
+        updateHealthBar(event.targetId, players[event.targetId].health);
+
+        if (players[event.targetId].health <= 0) {
+            console.log("You have been destroyed!");
+            removeHealthBar(event.targetId);
+            // Add additional destruction logic
+        }
+
+        // Create explosion effect
+        createExplosionEffect(players[event.targetId].position);
+    }
+}
+(function () {
+    const serverUrl = "https://your-serverless-api.com/missiles"; // Replace with your API endpoint
+
+    // Plane and missile configurations
+    const planes = {
+        "FA-18F": {
+            modelId: "fa18f",
+            missiles: {
+                "AIM-9X Sidewinder": {
+                    type: "air-to-air",
+                    speed: 850,
+                    range: 18000,
+                    damage: 75,
+                    tracking: true,
+                },
+                "AIM-7 Sparrow": {
+                    type: "air-to-air",
+                    speed: 800,
+                    range: 25000,
+                    damage: 90,
+                    tracking: true,
+                },
+                "AIM-120 AMRAAM": {
+                    type: "air-to-air",
+                    speed: 1200,
+                    range: 37000,
+                    damage: 100,
+                    tracking: true,
+                },
+            },
+        },
+        "F-16": {
+            modelId: "f16",
+            missiles: {
+                "AIM-9 Sidewinder": {
+                    type: "air-to-air",
+                    speed: 850,
+                    range: 16000,
+                    damage: 70,
+                    tracking: true,
+                },
+                "AIM-120 AMRAAM": {
+                    type: "air-to-air",
+                    speed: 1200,
+                    range: 37000,
+                    damage: 100,
+                    tracking: true,
+                },
+            },
+        },
+        "F-22": {
+            modelId: "f22",
+            missiles: {
+                "AIM-9X Sidewinder": {
+                    type: "air-to-air",
+                    speed: 850,
+                    range: 18000,
+                    damage: 75,
+                    tracking: true,
+                },
+                "AIM-120D AMRAAM": {
+                    type: "air-to-air",
+                    speed: 1500,
+                    range: 40000,
+                    damage: 110,
+                    tracking: true,
+                },
+            },
+        },
+        "F-15": {
+            modelId: "f15",
+            missiles: {
+                "AIM-7 Sparrow": {
+                    type: "air-to-air",
+                    speed: 800,
+                    range: 25000,
+                    damage: 90,
+                    tracking: true,
+                },
+                "AIM-120 AMRAAM": {
+                    type: "air-to-air",
+                    speed: 1200,
+                    range: 37000,
+                    damage: 100,
+                    tracking: true,
+                },
+            },
+        },
+        "F-14B": {
+            modelId: "f14b",
+            missiles: {
+                "AIM-54 Phoenix": {
+                    type: "air-to-air",
+                    speed: 1500,
+                    range: 190000,
+                    damage: 120,
+                    tracking: true,
+                },
+                "AIM-9 Sidewinder": {
+                    type: "air-to-air",
+                    speed: 850,
+                    range: 16000,
+                    damage: 70,
+                    tracking: true,
+                },
+            },
+        },
+        "F-35B": {
+            modelId: "f35b",
+            missiles: {
+                "AIM-9X Sidewinder": {
+                    type: "air-to-air",
+                    speed: 850,
+                    range: 18000,
+                    damage: 75,
+                    tracking: true,
+                },
+                "AIM-120D AMRAAM": {
+                    type: "air-to-air",
+                    speed: 1500,
+                    range: 40000,
+                    damage: 110,
+                    tracking: true,
+                },
+            },
+        },
+        "SU-35": {
+            modelId: "su35",
+            missiles: {
+                "R-73 Archer": {
+                    type: "air-to-air",
+                    speed: 750,
+                    range: 30000,
+                    damage: 80,
+                    tracking: true,
+                },
+                "R-77 Adder": {
+                    type: "air-to-air",
+                    speed: 1200,
+                    range: 50000,
+                    damage: 100,
+                    tracking: true,
+                },
+            },
+        },
+    };
+
+    let selectedMissile = null; // Currently selected missile
+    let currentPlane = null; // Currently flying plane
+
+    function getCurrentPlane() {
+        const planeId = geofs.aircraft.instance.id; // Replace with actual GeoFS logic
+        for (const planeName in planes) {
+            if (planes[planeName].modelId === planeId) {
+                return planes[planeName];
+            }
+        }
+        return null;
+    }
+
+    function selectMissile(missileName) {
+        if (currentPlane && currentPlane.missiles[missileName]) {
+            selectedMissile = missileName;
+            console.log(`Missile type selected: ${missileName}`);
+        } else {
+            console.error("Invalid missile type selected.");
+        }
+    }
+
+    function launchMissile() {
+        if (!currentPlane) {
+            console.log("You are not flying a supported plane. Missile launch aborted.");
+            return;
+        }
+
+        if (!selectedMissile) {
+            console.log("No missile selected. Missile launch aborted.");
+            return;
+        }
+
+        const missileConfig = currentPlane.missiles[selectedMissile];
+        if (!missileConfig) {
+            console.error("Invalid missile configuration.");
+            return;
+        }
+
+        console.log(`${selectedMissile} launched!`);
+
+        // Create a missile event
+        const missileEvent = {
+            type: missileConfig.type,
+            missileName: selectedMissile,
+            playerId: generatePlayerId(),
+            position: getPlayerPosition(),
+            speed: missileConfig.speed,
+            range: missileConfig.range,
+            damage: missileConfig.damage,
+            tracking: missileConfig.tracking,
+            timestamp: Date.now(),
+        };
+
+        // Send the missile event to the server
+        fetch(serverUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(missileEvent),
+        })
+            .then((response) => response.json())
+            .then((data) => console.log("Missile event sent:", data))
+            .catch((error) => console.error("Error sending missile event:", error));
+    }
+
+    function updateCurrentPlane() {
+        currentPlane = getCurrentPlane();
+        if (currentPlane) {
+            console.log(`Current plane: ${currentPlane.modelId}`);
+            // Automatically select the first missile for the plane
+            const firstMissile = Object.keys(currentPlane.missiles)[0];
+            selectMissile(firstMissile);
+        } else {
+            console.log("You are not flying a supported plane.");
+        }
+    }
+
+    // Update the current plane whenever the script starts or the plane changes
+    updateCurrentPlane();
+
+    // Example: Bind missile selection and launch to keys
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "m") {
+            launchMissile();
+        } else if (event.key === "1") {
+            selectMissile("AIM-9X Sidewinder");
+        } else if (event.key === "2") {
+            selectMissile("AIM-7 Sparrow");
+        } else if (event.key === "3") {
+            selectMissile("AIM-120 AMRAAM");
+        }
+    });
+})();
+(function () {
+    const serverUrl = "https://your-serverless-api.com/missiles"; // Replace with your API endpoint
+    const players = {}; // Store player data (e.g., positions, health)
+
+    // Plane and missile configurations (same as before)
+    const planes = {
+        "FA-18F": { /* ... */ },
+        "F-16": { /* ... */ },
+        "F-22": { /* ... */ },
+        "F-15": { /* ... */ },
+        "F-14B": { /* ... */ },
+        "F-35B": { /* ... */ },
+        "SU-35": { /* ... */ },
+    };
+
+    let selectedMissile = null;
+    let currentPlane = null;
+
+    function getCurrentPlane() {
+        const planeId = geofs.aircraft.instance.id; // Replace with actual GeoFS logic
+        for (const planeName in planes) {
+            if (planes[planeName].modelId === planeId) {
+                return planes[planeName];
+            }
+        }
+        return null;
+    }
+
+    function selectMissile(missileName) {
+        if (currentPlane && currentPlane.missiles[missileName]) {
+            selectedMissile = missileName;
+            console.log(`Missile type selected: ${missileName}`);
+        } else {
+            console.error("Invalid missile type selected.");
+        }
+    }
+
+    function launchMissile() {
+        if (!currentPlane) {
+            console.log("You are not flying a supported plane. Missile launch aborted.");
+            return;
+        }
+
+        if (!selectedMissile) {
+            console.log("No missile selected. Missile launch aborted.");
+            return;
+        }
+
+        const missileConfig = currentPlane.missiles[selectedMissile];
+        if (!missileConfig) {
+            console.error("Invalid missile configuration.");
+            return;
+        }
+
+        console.log(`${selectedMissile} launched!`);
+
+        // Create a missile event
+        const missileEvent = {
+            type: missileConfig.type,
+            missileName: selectedMissile,
+            playerId: generatePlayerId(),
+            position: getPlayerPosition(),
+            speed: missileConfig.speed,
+            range: missileConfig.range,
+            damage: missileConfig.damage,
+            tracking: missileConfig.tracking,
+            timestamp: Date.now(),
+        };
+
+        // Send the missile event to the server
+        fetch(serverUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(missileEvent),
+        })
+            .then((response) => response.json())
+            .then((data) => console.log("Missile event sent:", data))
+            .catch((error) => console.error("Error sending missile event:", error));
+    }
+
+    function fetchMissileEvents() {
+        // Fetch missile events from the server
+        fetch(serverUrl)
+            .then((response) => response.json())
+            .then((events) => {
+                events.forEach((event) => {
+                    if (event.type === "air-to-air") {
+                        handleMissileEvent(event);
+                    }
+                });
+            })
+            .catch((error) => console.error("Error fetching missile events:", error));
+    }
+
+    function handleMissileEvent(event) {
+        if (event.targetId === generatePlayerId()) {
+            // Missile hit logic
+            const damage = event.damage;
+            players[event.targetId].health -= damage;
+
+            updateHealthBar(event.targetId, players[event.targetId].health);
+
+            if (players[event.targetId].health <= 0) {
+                console.log("You have been destroyed!");
+                removeHealthBar(event.targetId);
+                // Add additional destruction logic
+            }
+
+            // Create explosion effect
+            createExplosionEffect(players[event.targetId].position);
+        }
+    }
+
+    function updatePlayerState(playerId, position, health) {
+        if (!players[playerId]) {
+            players[playerId] = { position, health };
+            createHealthBar(playerId);
+        } else {
+            players[playerId].position = position;
+            players[playerId].health = health;
+            updateHealthBar(playerId, health);
+        }
+    }
+
+    function synchronizePlayers() {
+        // Fetch player states from the server
+        fetch(`${serverUrl}/players`)
+            .then((response) => response.json())
+            .then((playerStates) => {
+                playerStates.forEach((player) => {
+                    updatePlayerState(player.playerId, player.position, player.health);
+                });
+            })
+            .catch((error) => console.error("Error synchronizing players:", error));
+    }
+
+    function getPlayerPosition() {
+        // Replace with actual logic to get the player's position in GeoFS
+        return { x: Math.random() * 100, y: Math.random() * 100, z: Math.random() * 100 }; // Example position
+    }
+
+    function generatePlayerId() {
+        return "player-" + Math.floor(Math.random() * 10000);
+    }
+
+    // Poll the server for missile events and player states every 2 seconds
+    setInterval(fetchMissileEvents, 2000);
+    setInterval(synchronizePlayers, 2000);
+
+    // Example: Bind missile selection and launch to keys
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "m") {
+            launchMissile();
+        } else if (event.key === "1") {
+            selectMissile("AIM-9X Sidewinder");
+        } else if (event.key === "2") {
+            selectMissile("AIM-7 Sparrow");
+        } else if (event.key === "3") {
+            selectMissile("AIM-120 AMRAAM");
+        }
+    });
+})();
+function createPlayerIndicator(playerId) {
+    const indicator = document.createElement("div");
+    indicator.id = `player-indicator-${playerId}`;
+    indicator.style.position = "absolute";
+    indicator.style.width = "10px";
+    indicator.style.height = "10px";
+    indicator.style.backgroundColor = "blue";
+    indicator.style.borderRadius = "50%";
+    indicator.style.zIndex = "1000";
+    indicator.style.display = "none"; // Hidden by default
+    document.body.appendChild(indicator);
+
+    const healthBar = document.createElement("div");
+    healthBar.id = `player-health-${playerId}`;
+    healthBar.style.position = "absolute";
+    healthBar.style.width = "50px";
+    healthBar.style.height = "5px";
+    healthBar.style.backgroundColor = "red";
+    healthBar.style.border = "1px solid black";
+    healthBar.style.zIndex = "1000";
+    healthBar.style.display = "none"; // Hidden by default
+    document.body.appendChild(healthBar);
+
+    const healthFill = document.createElement("div");
+    healthFill.id = `player-health-fill-${playerId}`;
+    healthFill.style.width = "100%";
+    healthFill.style.height = "100%";
+    healthFill.style.backgroundColor = "green";
+    healthBar.appendChild(healthFill);
+}
+
+function updatePlayerIndicator(playerId, position, health) {
+    const indicator = document.getElementById(`player-indicator-${playerId}`);
+    const healthBar = document.getElementById(`player-health-${playerId}`);
+    const healthFill = document.getElementById(`player-health-fill-${playerId}`);
+
+    if (indicator && healthBar && healthFill) {
+        // Convert 3D position to 2D screen coordinates
+        const screenPosition = convertToScreenCoordinates(position);
+
+        // Update indicator position
+        indicator.style.left = `${screenPosition.x}px`;
+        indicator.style.top = `${screenPosition.y}px`;
+        indicator.style.display = "block";
+
+        // Update health bar position and health
+        healthBar.style.left = `${screenPosition.x - 20}px`; // Center above the indicator
+        healthBar.style.top = `${screenPosition.y - 15}px`;
+        healthBar.style.display = "block";
+        healthFill.style.width = `${health}%`;
+    }
+}
+
+function removePlayerIndicator(playerId) {
+    const indicator = document.getElementById(`player-indicator-${playerId}`);
+    const healthBar = document.getElementById(`player-health-${playerId}`);
+    if (indicator) indicator.remove();
+    if (healthBar) healthBar.remove();
+}
+
+function convertToScreenCoordinates(position) {
+    // Placeholder logic for converting 3D position to 2D screen coordinates
+    return {
+        x: (position.x % window.innerWidth) + window.innerWidth / 2,
+        y: (position.y % window.innerHeight) + window.innerHeight / 2,
+    };
+}
+function synchronizePlayers() {
+    // Fetch player states from the server
+    fetch(`${serverUrl}/players`)
+        .then((response) => response.json())
+        .then((playerStates) => {
+            playerStates.forEach((player) => {
+                if (!players[player.playerId]) {
+                    players[player.playerId] = { position: player.position, health: player.health };
+                    createPlayerIndicator(player.playerId);
+                }
+                updatePlayerIndicator(player.playerId, player.position, player.health);
+            });
+
+            // Remove indicators for players who are no longer active
+            Object.keys(players).forEach((playerId) => {
+                if (!playerStates.find((p) => p.playerId === playerId)) {
+                    removePlayerIndicator(playerId);
+                    delete players[playerId];
+                }
+            });
+        })
+        .catch((error) => console.error("Error synchronizing players:", error));
+}
+(function () {
+    const serverUrl = "https://your-serverless-api.com/missiles"; // Replace with your API endpoint
+    const players = {}; // Store player data (e.g., positions, health, countermeasures)
+
+    // Plane and missile configurations
+    const planes = {
+        "FA-18F": {
+            modelId: "fa18f",
+            missiles: { /* ... */ },
+            countermeasures: 10, // Number of countermeasures available
+        },
+        "F-16": {
+            modelId: "f16",
+            missiles: { /* ... */ },
+            countermeasures: 8,
+        },
+        "F-22": {
+            modelId: "f22",
+            missiles: { /* ... */ },
+            countermeasures: 12,
+        },
+        "F-15": {
+            modelId: "f15",
+            missiles: { /* ... */ },
+            countermeasures: 10,
+        },
+        "F-14B": {
+            modelId: "f14b",
+            missiles: { /* ... */ },
+            countermeasures: 6,
+        },
+        "F-35B": {
+            modelId: "f35b",
+            missiles: { /* ... */ },
+            countermeasures: 15,
+        },
+        "SU-35": {
+            modelId: "su35",
+            missiles: { /* ... */ },
+            countermeasures: 10,
+        },
+    };
+
+    let currentPlane = null; // Currently flying plane
+    let countermeasureCooldown = false; // Cooldown flag for countermeasures
+
+    function getCurrentPlane() {
+        const planeId = geofs.aircraft.instance.id; // Replace with actual GeoFS logic
+        for (const planeName in planes) {
+            if (planes[planeName].modelId === planeId) {
+                return planes[planeName];
+            }
+        }
+        return null;
+    }
+
+    function deployCountermeasure() {
+        if (!currentPlane) {
+            console.log("You are not flying a supported plane. Countermeasure deployment aborted.");
+            return;
+        }
+
+        if (countermeasureCooldown) {
+            console.log("Countermeasures are on cooldown!");
+            return;
+        }
+
+        if (currentPlane.countermeasures > 0) {
+            currentPlane.countermeasures--;
+            console.log(`Countermeasure deployed! Remaining: ${currentPlane.countermeasures}`);
+            displayCountermeasureEffect();
+            countermeasureCooldown = true;
+
+            // Cooldown period (e.g., 3 seconds)
+            setTimeout(() => {
+                countermeasureCooldown = false;
+            }, 3000);
+        } else {
+            console.log("No countermeasures remaining!");
+        }
+    }
+
+    function displayCountermeasureEffect() {
+        const flare = document.createElement("div");
+        flare.style.position = "absolute";
+        flare.style.width = "20px";
+        flare.style.height = "20px";
+        flare.style.backgroundColor = "orange";
+        flare.style.borderRadius = "50%";
+        flare.style.opacity = "0.8";
+        flare.style.zIndex = "1000";
+
+        // Example: Place the flare near the player's position
+        const playerPosition = getPlayerPosition();
+        const screenPosition = convertToScreenCoordinates(playerPosition);
+        flare.style.left = `${screenPosition.x - 10}px`;
+        flare.style.top = `${screenPosition.y - 10}px`;
+
+        document.body.appendChild(flare);
+
+        // Remove the flare after 10.5 second
+        setTimeout(() => flare.remove(), 1000);
+    }
+
+    function evadeMissile(missileEvent) {
+        // Check if the target deployed countermeasures
+        if (missileEvent.targetId === generatePlayerId() && countermeasureCooldown) {
+            const evadeChance = Math.random(); // Random chance to evade
+            if (evadeChance < 0.7) { // 70% chance to evade
+                console.log("Missile evaded using countermeasures!");
+                return true; // Missile misses the target
+            }
+        }
+        return false; // Missile continues tracking
+    }
+
+    function handleMissileEvent(event) {
+        if (event.targetId === generatePlayerId()) {
+            // Check if the missile is evaded
+            if (evadeMissile(event)) {
+                return; // Missile missed
+            }
+
+            // Missile hit logic
+            const damage = event.damage;
+            players[event.targetId].health -= damage;
+
+            updateHealthBar(event.targetId, players[event.targetId].health);
+
+            if (players[event.targetId].health <= 0) {
+                console.log("You have been destroyed!");
+                removeHealthBar(event.targetId);
+                // Add additional destruction logic
+            }
+
+            // Create explosion effect
+            createExplosionEffect(players[event.targetId].position);
+        }
+    }
+
+    function updateCountermeasureUI() {
+        const countermeasureDisplay = document.getElementById("countermeasure-display");
+        if (!countermeasureDisplay) {
+            const display = document.createElement("div");
+            display.id = "countermeasure-display";
+            display.style.position = "absolute";
+            display.style.bottom = "50px";
+            display.style.left = "10px";
+            display.style.color = "white";
+            display.style.fontSize = "16px";
+            display.style.zIndex = "1000";
+            document.body.appendChild(display);
+        }
+        document.getElementById("countermeasure-display").innerText = `Countermeasures: ${currentPlane.countermeasures}`;
+    }
+
+    // Update the current plane whenever the script starts or the plane changes
+    function updateCurrentPlane() {
+        currentPlane = getCurrentPlane();
+        if (currentPlane) {
+            console.log(`Current plane: ${currentPlane.modelId}`);
+            updateCountermeasureUI();
+        } else {
+            console.log("You are not flying a supported plane.");
+        }
+    }
+
+    // Update the current plane and UI on initialization
+    updateCurrentPlane();
+
+    // Example: Bind countermeasure deployment to a key
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "c") { // Press '=' to deploy countermeasures
+            deployCountermeasure();
+            updateCountermeasureUI();
+        }
+    });
+
+    // Poll the server for missile events and player states every 2 seconds
+    setInterval(fetchMissileEvents, 2000);
+    setInterval(synchronizePlayers, 2000);
+})();
+function displayCountermeasureEffect() {
+    const flare = document.createElement("div");
+    flare.style.position = "absolute";
+    flare.style.width = "20px";
+    flare.style.height = "20px";
+    flare.style.backgroundColor = "orange";
+    flare.style.borderRadius = "50%";
+    flare.style.opacity = "0.8";
+    flare.style.zIndex = "1000";
+    flare.style.animation = "flare-animation 1s ease-out";
+
+    // Example: Place the flare near the player's position
+    const playerPosition = getPlayerPosition();
+    const screenPosition = convertToScreenCoordinates(playerPosition);
+    flare.style.left = `${screenPosition.x - 10}px`;
+    flare.style.top = `${screenPosition.y - 10}px`;
+
+    document.body.appendChild(flare);
+
+    // Remove the flare after 1 second
+    setTimeout(() => flare.remove(), 1000);
+}
+
+// Add CSS for flare animation
+const style = document.createElement("style");
+style.innerHTML = `
+    @keyframes flare-animation {
+        0% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+        50% {
+            transform: scale(1.5);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+const planes = {
+    "FA-18F": {
+        modelId: "fa18f",
+        missiles: { /* ... */ },
+        countermeasures: 10,
+        cooldown: 3000, // Cooldown in milliseconds
+    },
+    "F-16": {
+        modelId: "f16",
+        missiles: { /* ... */ },
+        countermeasures: 8,
+        cooldown: 4000,
+    },
+    "F-22": {
+        modelId: "f22",
+        missiles: { /* ... */ },
+        countermeasures: 12,
+        cooldown: 2000,
+    },
+    "F-35B": {
+        modelId: "f35b",
+        missiles: { /* ... */ },
+        countermeasures: 15,
+        cooldown: 3000,
+    },
+    "SU-35": {
+        modelId: "su35",
+        missiles: { /* ... */ },
+        countermeasures: 10,
+        cooldown: 3000,
+    },
+};
+function deployCountermeasure() {
+    if (!currentPlane) {
+        console.log("You are not flying a supported plane. Countermeasure deployment aborted.");
+        return;
+    }
+
+    if (countermeasureCooldown) {
+        console.log("Countermeasures are on cooldown!");
+        return;
+    }
+
+    if (currentPlane.countermeasures > 0) {
+        currentPlane.countermeasures--;
+        console.log(`Countermeasure deployed! Remaining: ${currentPlane.countermeasures}`);
+        displayCountermeasureEffect();
+        countermeasureCooldown = true;
+
+        // Use the plane-specific cooldown
+        setTimeout(() => {
+            countermeasureCooldown = false;
+        }, currentPlane.cooldown);
+    } else {
+        console.log("No countermeasures remaining!");
+    }
+}
+function createPlaneDropdown() {
+    const dropdown = document.createElement("div");
+    dropdown.id = "plane-dropdown";
+    dropdown.style.position = "absolute";
+    dropdown.style.top = "10px";
+    dropdown.style.left = "10px";
+    dropdown.style.backgroundColor = "white";
+    dropdown.style.border = "1px solid black";
+    dropdown.style.padding = "10px";
+    dropdown.style.zIndex = "1000";
+
+    const select = document.createElement("select");
+    select.id = "plane-select";
+    select.style.width = "200px";
+
+    // Add options for each plane
+    Object.keys(planes).forEach((planeName) => {
+        const option = document.createElement("option");
+        option.value = planeName;
+        option.textContent = planeName;
+        select.appendChild(option);
+    });
+
+    const details = document.createElement("div");
+    details.id = "plane-details";
+    details.style.marginTop = "10px";
+
+    select.addEventListener("change", (event) => {
+        const selectedPlane = planes[event.target.value];
+        if (selectedPlane) {
+            displayPlaneDetails(selectedPlane);
+        }
+    });
+
+    dropdown.appendChild(select);
+    dropdown.appendChild(details);
+    document.body.appendChild(dropdown);
+}
+
+function displayPlaneDetails(plane) {
+    const details = document.getElementById("plane-details");
+    details.innerHTML = `
+        <h3>${plane.modelId}</h3>
+        <p><strong>Countermeasures:</strong> ${plane.countermeasures}</p>
+        <p><strong>Missiles:</strong></p>
+        <ul>
+            ${Object.keys(plane.missiles)
+                .map((missile) => `<li>${missile}</li>`)
+                .join("")}
+        </ul>
+        <button id="deploy-countermeasure">Deploy Countermeasure</button>
+    `;
+
+    const button = document.getElementById("deploy-countermeasure");
+    button.addEventListener("click", () => {
+        deployCountermeasure();
+        updateCountermeasureUI();
+    });
+}
+createPlaneDropdown();
+const planes = {
+    "FA-18F": {
+        modelId: "fa18f",
+        missiles: {
+            "AIM-9X Sidewinder": {
+                type: "air-to-air",
+                speed: 850,
+                range: 18000,
+                damage: 75,
+                tracking: true,
+            },
+            "AIM-7 Sparrow": {
+                type: "air-to-air",
+                speed: 800,
+                range: 25000,
+                damage: 90,
+                tracking: true,
+            },
+            "AIM-120 AMRAAM": {
+                type: "air-to-air",
+                speed: 1200,
+                range: 37000,
+                damage: 100,
+                tracking: true,
+            },
+        },
+        countermeasures: 10,
+        cooldown: 3000,
+    },
+    "F-16": {
+        modelId: "f16",
+        missiles: {
+            "AIM-9 Sidewinder": {
+                type: "air-to-air",
+                speed: 850,
+                range: 16000,
+                damage: 70,
+                tracking: true,
+            },
+            "AIM-120 AMRAAM": {
+                type: "air-to-air",
+                speed: 1200,
+                range: 37000,
+                damage: 100,
+                tracking: true,
+            },
+        },
+        countermeasures: 8,
+        cooldown: 4000,
+    },
+    "F-22": {
+        modelId: "f22",
+        missiles: {
+            "AIM-9X Sidewinder": {
+                type: "air-to-air",
+                speed: 850,
+                range: 18000,
+                damage: 75,
+                tracking: true,
+            },
+            "AIM-120D AMRAAM": {
+                type: "air-to-air",
+                speed: 1500,
+                range: 40000,
+                damage: 110,
+                tracking: true,
+            },
+        },
+        countermeasures: 12,
+        cooldown: 2000,
+    },
+    "F-15": {
+        modelId: "f15",
+        missiles: {
+            "AIM-7 Sparrow": {
+                type: "air-to-air",
+                speed: 800,
+                range: 25000,
+                damage: 90,
+                tracking: true,
+            },
+            "AIM-120 AMRAAM": {
+                type: "air-to-air",
+                speed: 1200,
+                range: 37000,
+                damage: 100,
+                tracking: true,
+            },
+        },
+        countermeasures: 10,
+        cooldown: 3000,
+    },
+    "F-14B": {
+        modelId: "f14b",
+        missiles: {
+            "AIM-54 Phoenix": {
+                type: "air-to-air",
+                speed: 1500,
+                range: 190000,
+                damage: 120,
+                tracking: true,
+            },
+            "AIM-9 Sidewinder": {
+                type: "air-to-air",
+                speed: 850,
+                range: 16000,
+                damage: 70,
+                tracking: true,
+            },
+        },
+        countermeasures: 6,
+        cooldown: 5000,
+    },
+    "F-35B": {
+        modelId: "f35b",
+        missiles: {
+            "AIM-9X Sidewinder": {
+                type: "air-to-air",
+                speed: 850,
+                range: 18000,
+                damage: 75,
+                tracking: true,
+            },
+            "AIM-120D AMRAAM": {
+                type: "air-to-air",
+                speed: 1500,
+                range: 40000,
+                damage: 110,
+                tracking: true,
+            },
+        },
+        countermeasures: 15,
+        cooldown: 3000,
+    },
+    "SU-35": {
+        modelId: "su35",
+        missiles: {
+            "R-73 Archer": {
+                type: "air-to-air",
+                speed: 750,
+                range: 30000,
+                damage: 80,
+                tracking: true,
+            },
+            "R-77 Adder": {
+                type: "air-to-air",
+                speed: 1200,
+                range: 50000,
+                damage: 100,
+                tracking: true,
+            },
+        },
+        countermeasures: 10,
+        cooldown: 3000,
+    },
+};
+function createPlaneDropdown() {
+    const dropdown = document.createElement("div");
+    dropdown.id = "plane-dropdown";
+    dropdown.style.position = "absolute";
+    dropdown.style.top = "10px";
+    dropdown.style.left = "10px";
+    dropdown.style.backgroundColor = "white";
+    dropdown.style.border = "1px solid black";
+    dropdown.style.padding = "10px";
+    dropdown.style.zIndex = "1000";
+
+    const select = document.createElement("select");
+    select.id = "plane-select";
+    select.style.width = "200px";
+
+    // Add options for each plane
+    Object.keys(planes).forEach((planeName) => {
+        const option = document.createElement("option");
+        option.value = planeName;
+        option.textContent = planeName;
+        select.appendChild(option);
+    });
+
+    const details = document.createElement("div");
+    details.id = "plane-details";
+    details.style.marginTop = "10px";
+
+    select.addEventListener("change", (event) => {
+        const selectedPlane = planes[event.target.value];
+        if (selectedPlane) {
+            displayPlaneDetails(selectedPlane);
+        }
+    });
+
+    dropdown.appendChild(select);
+    dropdown.appendChild(details);
+    document.body.appendChild(dropdown);
+}
+
+function displayPlaneDetails(plane) {
+    const details = document.getElementById("plane-details");
+    details.innerHTML = `
+        <h3>${plane.modelId}</h3>
+        <p><strong>Countermeasures:</strong> ${plane.countermeasures}</p>
+        <p><strong>Missiles:</strong></p>
+        <ul>
+            ${Object.keys(plane.missiles)
+                .map((missile) => `<li>${missile}</li>`)
+                .join("")}
+        </ul>
+        <button id="deploy-countermeasure">Deploy Countermeasure</button>
+    `;
+
+    const button = document.getElementById("deploy-countermeasure");
+    button.addEventListener("click", () => {
+        deployCountermeasure();
+        updateCountermeasureUI();
+    });
+}
+createPlaneDropdown();
+// Initialize Three.js scene
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Add a light source
+const light = new THREE.PointLight(0xffffff, 1, 100);
+light.position.set(10, 10, 10);
+scene.add(light);
+
+// Set the camera position
+camera.position.z = 50;
+function createMissile() {
+    const geometry = new THREE.CylinderGeometry(0.2, 0.2, 2, 32);
+    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const missile = new THREE.Mesh(geometry, material);
+
+    // Rotate the missile to point forward
+    missile.rotation.x = Math.PI / 2;
+
+    return missile;
+}
+function launchMissile3D(planePosition, targetPosition, missileConfig) {
+    const missile = createMissile();
+    missile.position.set(planePosition.x, planePosition.y, planePosition.z);
+    scene.add(missile);
+
+    const missileSpeed = missileConfig.speed / 100; // Adjust speed for animation
+    const maxRange = missileConfig.range;
+
+    let traveledDistance = 0;
+
+    // Animate the missile
+    function animateMissile() {
+        if (traveledDistance >= maxRange) {
+            // Missile falls out of the sky
+            missile.position.y -= 0.5;
+            if (missile.position.y < -10) {
+                scene.remove(missile);
+                return;
+            }
+        } else {
+            // Move the missile toward the target
+            const direction = new THREE.Vector3(
+                targetPosition.x - missile.position.x,
+                targetPosition.y - missile.position.y,
+                targetPosition.z - missile.position.z
+            ).normalize();
+
+            missile.position.add(direction.multiplyScalar(missileSpeed));
+            traveledDistance += missileSpeed;
+
+            // Check if the missile hits the target
+            if (missile.position.distanceTo(targetPosition) < 1) {
+                createExplosionEffect3D(targetPosition);
+                scene.remove(missile);
+                return;
+            }
+        }
+
+        requestAnimationFrame(animateMissile);
+        renderer.render(scene, camera);
+    }
+
+    animateMissile();
+}
+function evadeMissile3D(missile) {
+    console.log("Missile evaded using countermeasures!");
+    missile.material.color.set(0x00ff00); // Change color to indicate evasion
+
+    // Animate the missile falling out of the sky
+    function fallOutOfSky() {
+        missile.position.y -= 0.5;
+        if (missile.position.y < -10) {
+            scene.remove(missile);
+            return;
+        }
+        requestAnimationFrame(fallOutOfSky);
+        renderer.render(scene, camera);
+    }
+
+    fallOutOfSky();
+}
+function createExplosionEffect3D(position) {
+    const geometry = new THREE.SphereGeometry(1, 32, 32);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffa500 });
+    const explosion = new THREE.Mesh(geometry, material);
+
+    explosion.position.set(position.x, position.y, position.z);
+    scene.add(explosion);
+
+    // Animate the explosion
+    let scale = 1;
+    function animateExplosion() {
+        scale += 0.1;
+        explosion.scale.set(scale, scale, scale);
+        explosion.material.opacity -= 0.05;
+
+        if (explosion.material.opacity <= 0) {
+            scene.remove(explosion);
+            return;
+        }
+
+        requestAnimationFrame(animateExplosion);
+        renderer.render(scene, camera);
+    }
+
+    animateExplosion();
+}
+function launchMissile() {
+    if (!currentPlane) {
+        console.log("You are not flying a supported plane. Missile launch aborted.");
+        return;
+    }
+
+    if (!selectedMissile) {
+        console.log("No missile selected. Missile launch aborted.");
+        return;
+    }
+
+    const missileConfig = currentPlane.missiles[selectedMissile];
+    if (!missileConfig) {
+        console.error("Invalid missile configuration.");
+        return;
+    }
+
+    console.log(`${selectedMissile} launched!`);
+
+    // Get the plane's position and target position
+    const planePosition = getPlayerPosition();
+    const targetPosition = lockedTarget ? lockedTarget.position : { x: 0, y: 0, z: 0 };
+
+    // Launch the 3D missile
+    launchMissile3D(planePosition, targetPosition, missileConfig);
+}
+function launchMissile() {
+    if (!currentPlane) {
+        console.log("You are not flying a supported plane. Missile launch aborted.");
+        return;
+    }
+
+    if (!selectedMissile) {
+        console.log("No missile selected. Missile launch aborted.");
+        return;
+    }
+
+    const missileConfig = currentPlane.missiles[selectedMissile];
+    if (!missileConfig) {
+        console.error("Invalid missile configuration.");
+        return;
+    }
+
+    console.log(`${selectedMissile} launched!`);
+
+    // Get the plane's position and target position
+    const planePosition = getPlayerPosition();
+    const targetPosition = lockedTarget ? lockedTarget.position : { x: 0, y: 0, z: 0 };
+
+    // Create a missile event
+    const missileEvent = {
+        type: "missile",
+        missileName: selectedMissile,
+        playerId: generatePlayerId(),
+        targetId: lockedTarget ? lockedTarget.playerId : null,
+        position: planePosition,
+        targetPosition: targetPosition,
+        speed: missileConfig.speed,
+        range: missileConfig.range,
+        damage: missileConfig.damage,
+        tracking: missileConfig.tracking,
+        timestamp: Date.now(),
+    };
+
+    // Send the missile event to the server
+    fetch(`${serverUrl}/missiles`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(missileEvent),
+    })
+        .then((response) => response.json())
+        .then((data) => console.log("Missile event sent:", data))
+        .catch((error) => console.error("Error sending missile event:", error));
+
+    // Launch the 3D missile locally
+    launchMissile3D(planePosition, targetPosition, missileConfig);
+}
+function handleMissileEvent(event) {
+    if (event.targetId === generatePlayerId()) {
+        console.log("Incoming missile detected!");
+
+        // Play warning sound
+        playWarningSound();
+
+        // Check if the missile is evaded
+        if (evadeMissile(event)) {
+            return; // Missile missed
+        }
+
+        // Missile hit logic
+        const damage = event.damage;
+        players[event.targetId].health -= damage;
+
+        updateHealthBar(event.targetId, players[event.targetId].health);
+
+        if (players[event.targetId].health <= 0) {
+            console.log("You have been destroyed!");
+            removeHealthBar(event.targetId);
+            // Add additional destruction logic
+        }
+
+        // Create explosion effect
+        createExplosionEffect(players[event.targetId].position);
+    } else {
+        // Render the missile for other players
+        launchMissile3D(event.position, event.targetPosition, {
+            speed: event.speed,
+            range: event.range,
+            damage: event.damage,
+            tracking: event.tracking,
+        });
+    }
+}
+function playWarningSound() {
+    const audio = new Audio("https://example.com/warning-sound.mp3"); // Replace with the URL of your warning sound
+    audio.play();
+}
+function updateMissilePosition(missileId, position) {
+    fetch(`${serverUrl}/missiles/${missileId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ position }),
+    })
+        .then((response) => response.json())
+        .then((data) => console.log("Missile position updated:", data))
+        .catch((error) => console.error("Error updating missile position:", error));
+}
+
+function synchronizeMissiles() {
+    fetch(`${serverUrl}/missiles`)
+        .then((response) => response.json())
+        .then((missiles) => {
+            missiles.forEach((missile) => {
+                // Update missile positions for all players
+                launchMissile3D(missile.position, missile.targetPosition, {
+                    speed: missile.speed,
+                    range: missile.range,
+                    damage: missile.damage,
+                    tracking: missile.tracking,
+                });
+            });
+        })
+        .catch((error) => console.error("Error synchronizing missiles:", error));
+}
+
+// Poll the server for missile updates every 2 seconds
+setInterval(synchronizeMissiles, 2000);
+function deployCountermeasure() {
+    if (!currentPlane) {
+        console.log("You are not flying a supported plane. Countermeasure deployment aborted.");
+        return;
+    }
+
+    if (countermeasureCooldown) {
+        console.log("Countermeasures are on cooldown!");
+        return;
+    }
+
+    if (currentPlane.countermeasures > 0) {
+        currentPlane.countermeasures--;
+        console.log(`Countermeasure deployed! Remaining: ${currentPlane.countermeasures}`);
+        displayCountermeasureEffect();
+        countermeasureCooldown = true;
+
+        // Broadcast countermeasure event
+        fetch(`${serverUrl}/countermeasures`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ playerId: generatePlayerId() }),
+        })
+            .then((response) => response.json())
+            .then((data) => console.log("Countermeasure event sent:", data))
+            .catch((error) => console.error("Error sending countermeasure event:", error));
+
+        // Cooldown period (e.g., 3 seconds)
+        setTimeout(() => {
+            countermeasureCooldown = false;
+        }, currentPlane.cooldown);
+    } else {
+        console.log("No countermeasures remaining!");
+    }
+}
+function createWarningIndicator() {
+    const warningOverlay = document.createElement("div");
+    warningOverlay.id = "warning-overlay";
+    warningOverlay.style.position = "absolute";
+    warningOverlay.style.top = "0";
+    warningOverlay.style.left = "0";
+    warningOverlay.style.width = "100%";
+    warningOverlay.style.height = "100%";
+    warningOverlay.style.backgroundColor = "rgba(255, 0, 0, 0.5)";
+    warningOverlay.style.zIndex = "2000";
+    warningOverlay.style.display = "none"; // Hidden by default
+    warningOverlay.style.animation = "warning-flash 1s infinite alternate";
+    document.body.appendChild(warningOverlay);
+
+    // Add CSS for flashing animation
+    const style = document.createElement("style");
+    style.innerHTML = `
+        @keyframes warning-flash {
+            0% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 0.8;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function showWarningIndicator() {
+    const warningOverlay = document.getElementById("warning-overlay");
+    if (warningOverlay) {
+        warningOverlay.style.display = "block";
+    }
+}
+
+function hideWarningIndicator() {
+    const warningOverlay = document.getElementById("warning-overlay");
+    if (warningOverlay) {
+        warningOverlay.style.display = "none";
+    }
+}
+function handleMissileEvent(event) {
+    if (event.targetId === generatePlayerId()) {
+        console.log("Incoming missile detected!");
+
+        // Play warning sound
+        playWarningSound();
+
+        // Show visual warning indicator
+        showWarningIndicator();
+
+        // Hide the warning indicator after 5 seconds or when the missile is evaded
+        setTimeout(() => {
+            hideWarningIndicator();
+        }, 5000);
+
+        // Check if the missile is evaded
+        if (evadeMissile(event)) {
+            hideWarningIndicator(); // Hide the warning if the missile is evaded
+            return; // Missile missed
+        }
+
+        // Missile hit logic
+        const damage = event.damage;
+        players[event.targetId].health -= damage;
+
+        updateHealthBar(event.targetId, players[event.targetId].health);
+
+        if (players[event.targetId].health <= 0) {
+            console.log("You have been destroyed!");
+            removeHealthBar(event.targetId);
+            // Add additional destruction logic
+        }
+
+        // Create explosion effect
+        createExplosionEffect(players[event.targetId].position);
+    } else {
+        // Render the missile for other players
+        launchMissile3D(event.position, event.targetPosition, {
+            speed: event.speed,
+            range: event.range,
+            damage: event.damage,
+            tracking: event.tracking,
+        });
+    }
+}
+function synchronizeMissiles() {
+    fetch(`${serverUrl}/missiles`)
+        .then((response) => response.json())
+        .then((missiles) => {
+            missiles.forEach((missile) => {
+                // Update missile positions for all players
+                if (missile.targetId === generatePlayerId()) {
+                    handleMissileEvent(missile);
+                } else {
+                    launchMissile3D(missile.position, missile.targetPosition, {
+                        speed: missile.speed,
+                        range: missile.range,
+                        damage: missile.damage,
+                        tracking: missile.tracking,
+                    });
+                }
+            });
+        })
+        .catch((error) => console.error("Error synchronizing missiles:", error));
+}
+
+// Poll the server for missile updates every 2 seconds
+setInterval(synchronizeMissiles, 2000);
+function playWarningSound() {
+    const audio = new Audio("https://example.com/warning-sound.mp3"); // Replace with the URL of your warning sound
+    audio.play();
+}
+createWarningIndicator();
+function createWarningIndicator() {
+    let warningOverlay = document.getElementById("warning-overlay");
+    if (!warningOverlay) {
+        warningOverlay = document.createElement("div");
+        warningOverlay.id = "warning-overlay";
+        warningOverlay.style.position = "absolute";
+        warningOverlay.style.top = "0";
+        warningOverlay.style.left = "0";
+        warningOverlay.style.width = "100%";
+        warningOverlay.style.height = "100%";
+        warningOverlay.style.backgroundColor = "rgba(255, 0, 0, 0.5)";
+        warningOverlay.style.zIndex = "2000";
+        warningOverlay.style.display = "none"; // Hidden by default
+        warningOverlay.style.animation = "warning-flash 1s infinite alternate";
+        document.body.appendChild(warningOverlay);
+
+        // Add CSS for flashing animation
+        const style = document.createElement("style");
+        style.innerHTML = `
+            @keyframes warning-flash {
+                0% {
+                    opacity: 0.5;
+                }
+                100% {
+                    opacity: 0.8;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function showWarningIndicator() {
+    const warningOverlay = document.getElementById("warning-overlay");
+    if (warningOverlay) {
+        warningOverlay.style.display = "block";
+    }
+}
+
+function hideWarningIndicator() {
+    const warningOverlay = document.getElementById("warning-overlay");
+    if (warningOverlay) {
+        warningOverlay.style.display = "none";
+    }
+}
+function handleMissileEvent(event) {
+    if (event.targetId === generatePlayerId()) {
+        console.log("Incoming missile detected!");
+
+        // Play warning sound and show visual indicator
+        playWarningSound();
+        showWarningIndicator();
+
+        // Hide the warning indicator after 5 seconds or when the missile is evaded
+        setTimeout(() => {
+            hideWarningIndicator();
+        }, 5000);
+
+        // Check if the missile is evaded
+        if (evadeMissile(event)) {
+            hideWarningIndicator(); // Hide the warning if the missile is evaded
+            return; // Missile missed
+        }
+
+        // Missile hit logic
+        const damage = event.damage;
+        players[event.targetId].health -= damage;
+
+        updateHealthBar(event.targetId, players[event.targetId].health);
+
+        if (players[event.targetId].health <= 0) {
+            console.log("You have been destroyed!");
+            removeHealthBar(event.targetId);
+            // Add additional destruction logic
+        }
+
+        // Create explosion effect
+        createExplosionEffect(players[event.targetId].position);
+    }
+}
+function synchronizeGameState() {
+    fetch(`${serverUrl}/game-state`)
+        .then((response) => response.json())
+        .then((gameState) => {
+            const { missiles, players: playerStates } = gameState;
+
+            // Process missile events
+            missiles.forEach((missile) => {
+                if (missile.targetId === generatePlayerId()) {
+                    handleMissileEvent(missile);
+                } else {
+                    launchMissile3D(missile.position, missile.targetPosition, {
+                        speed: missile.speed,
+                        range: missile.range,
+                        damage: missile.damage,
+                        tracking: missile.tracking,
+                    });
+                }
+            });
+
+            // Process player states
+            playerStates.forEach((player) => {
+                updatePlayerState(player.playerId, player.position, player.health);
+            });
+        })
+        .catch((error) => console.error("Error synchronizing game state:", error));
+}
+
+// Poll the server for game state updates every 2 seconds
+setInterval(synchronizeGameState, 2000);
+function launchMissile3D(planePosition, targetPosition, missileConfig) {
+    const missile = createMissile();
+    missile.position.set(planePosition.x, planePosition.y, planePosition.z);
+    scene.add(missile);
+
+    const missileSpeed = missileConfig.speed / 100; // Adjust speed for animation
+    const maxRange = missileConfig.range;
+
+    let traveledDistance = 0;
+
+    // Animate the missile
+    function animateMissile() {
+        if (traveledDistance >= maxRange) {
+            // Missile falls out of the sky
+            missile.position.y -= 0.5;
+            if (missile.position.y < -10) {
+                scene.remove(missile);
+                return;
+            }
+        } else {
+            // Move the missile toward the target
+            const direction = new THREE.Vector3(
+                targetPosition.x - missile.position.x,
+                targetPosition.y - missile.position.y,
+                targetPosition.z - missile.position.z
+            ).normalize();
+
+            missile.position.add(direction.multiplyScalar(missileSpeed));
+            traveledDistance += missileSpeed;
+
+            // Check if the missile hits the target
+            if (missile.position.distanceTo(targetPosition) < 1) {
+                createExplosionEffect3D(targetPosition);
+                scene.remove(missile);
+                return;
+            }
+        }
+
+        requestAnimationFrame(animateMissile);
+        renderer.render(scene, camera);
+    }
+
+    animateMissile();
+}
+// Poll the server for game state updates every 3 seconds instead of 2
+setInterval(synchronizeGameState, 3000);
+const planes = {
+    "FA-18F": {
+        modelId: "fa18f",
+        missiles: {
+            "AIM-9X Sidewinder": {
+                type: "air-to-air",
+                speed: 850,
+                range: 18000,
+                damage: 75,
+                tracking: true,
+                count: 4, // Number of missiles available
+            },
+            "AIM-7 Sparrow": {
+                type: "air-to-air",
+                speed: 800,
+                range: 25000,
+                damage: 90,
+                tracking: true,
+                count: 2,
+            },
+            "AIM-120 AMRAAM": {
+                type: "air-to-air",
+                speed: 1200,
+                range: 37000,
+                damage: 100,
+                tracking: true,
+                count: 4,
+            },
+        },
+        countermeasures: 10,
+        cooldown: 3000,
+    },
+    // Add similar configurations for other planes...
+};
+function attachMissilesToPlane(plane) {
+    const missilePositions = [
+        { x: -1, y: 0, z: -2 }, // Example positions for missiles
+        { x: 1, y: 0, z: -2 },
+        { x: -1.5, y: 0, z: -3 },
+        { x: 1.5, y: 0, z: -3 },
+    ];
+
+    plane.missileModels = [];
+
+    Object.keys(plane.missiles).forEach((missileName, index) => {
+        const missileConfig = plane.missiles[missileName];
+        for (let i = 0; i < missileConfig.count; i++) {
+            const missile = createMissile();
+            const position = missilePositions[i % missilePositions.length];
+            missile.position.set(position.x, position.y, position.z);
+            scene.add(missile);
+            plane.missileModels.push({ missile, missileName });
+        }
+    });
+}
+
+function removeMissileFromPlane(plane, missileName) {
+    const missileIndex = plane.missileModels.findIndex(
+        (m) => m.missileName === missileName
+    );
+    if (missileIndex !== -1) {
+        const { missile } = plane.missileModels[missileIndex];
+        scene.remove(missile);
+        plane.missileModels.splice(missileIndex, 1);
+    }
+}
+function launchMissile() {
+    if (!currentPlane) {
+        console.log("You are not flying a supported plane. Missile launch aborted.");
+        return;
+    }
+
+    if (!selectedMissile) {
+        console.log("No missile selected. Missile launch aborted.");
+        return;
+    }
+
+    const missileConfig = currentPlane.missiles[selectedMissile];
+    if (!missileConfig || missileConfig.count <= 0) {
+        console.log("No missiles remaining for this type. Missile launch aborted.");
+        return;
+    }
+
+    console.log(`${selectedMissile} launched!`);
+
+    // Decrease missile count
+    missileConfig.count--;
+    removeMissileFromPlane(currentPlane, selectedMissile);
+
+    // Get the plane's position and target position
+    const planePosition = getPlayerPosition();
+    const targetPosition = lockedTarget ? lockedTarget.position : { x: 0, y: 0, z: 0 };
+
+    // Launch the 3D missile
+    launchMissile3D(planePosition, targetPosition, missileConfig);
+}
+function resupplyMissiles() {
+    if (!currentPlane) {
+        console.log("You are not flying a supported plane. Resupply aborted.");
+        return;
+    }
+
+    Object.keys(currentPlane.missiles).forEach((missileName) => {
+        const missileConfig = currentPlane.missiles[missileName];
+        missileConfig.count = missileConfig.initialCount; // Reset to initial count
+    });
+
+    console.log("Missiles resupplied!");
+    attachMissilesToPlane(currentPlane); // Reattach 3D missiles to the plane
+}
+function displayPlaneDetails(plane) {
+    const details = document.getElementById("plane-details");
+    details.innerHTML = `
+        <h3>${plane.modelId}</h3>
+        <p><strong>Countermeasures:</strong> ${plane.countermeasures}</p>
+        <p><strong>Missiles:</strong></p>
+        <ul>
+            ${Object.keys(plane.missiles)
+                .map(
+                    (missile) =>
+                        `<li>${missile}: ${plane.missiles[missile].count} remaining</li>`
+                )
+                .join("")}
+        </ul>
+        <button id="deploy-countermeasure">Deploy Countermeasure</button>
+        <button id="resupply-missiles">Resupply Missiles</button>
+    `;
+
+    const countermeasureButton = document.getElementById("deploy-countermeasure");
+    countermeasureButton.addEventListener("click", () => {
+        deployCountermeasure();
+        updateCountermeasureUI();
+    });
+
+    const resupplyButton = document.getElementById("resupply-missiles");
+    resupplyButton.addEventListener("click", () => {
+        resupplyMissiles();
+    });
+}
+function launchMissile() {
+    if (!currentPlane) {
+        console.log("You are not flying a supported plane. Missile launch aborted.");
+        return;
+    }
+
+    if (!selectedMissile) {
+        console.log("No missile selected. Missile launch aborted.");
+        return;
+    }
+
+    const missileConfig = currentPlane.missiles[selectedMissile];
+    if (!missileConfig || missileConfig.count <= 0) {
+        console.log("No missiles remaining for this type. Missile launch aborted.");
+        return;
+    }
+
+    console.log(`${selectedMissile} launched!`);
+
+    // Decrease missile count
+    missileConfig.count--;
+    removeMissileFromPlane(currentPlane, selectedMissile);
+
+    // Get the plane's position and target position
+    const planePosition = getPlayerPosition();
+    const targetPosition = lockedTarget ? lockedTarget.position : { x: 0, y: 0, z: 0 };
+
+    // Broadcast missile launch event to the server
+    const missileEvent = {
+        type: "missile-launch",
+        playerId: generatePlayerId(),
+        missileName: selectedMissile,
+        remainingCount: missileConfig.count,
+        position: planePosition,
+        targetPosition: targetPosition,
+        timestamp: Date.now(),
+    };
+
+    fetch(`${serverUrl}/missiles`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(missileEvent),
+    })
+        .then((response) => response.json())
+        .then((data) => console.log("Missile launch event sent:", data))
+        .catch((error) => console.error("Error sending missile launch event:", error));
+
+    // Launch the 3D missile locally
+    launchMissile3D(planePosition, targetPosition, missileConfig);
+}
+function synchronizeMissileStates() {
+    fetch(`${serverUrl}/missile-states`)
+        .then((response) => response.json())
+        .then((missileStates) => {
+            missileStates.forEach((state) => {
+                const plane = players[state.playerId]?.plane;
+                if (plane) {
+                    // Update missile counts
+                    Object.keys(state.missiles).forEach((missileName) => {
+                        plane.missiles[missileName].count = state.missiles[missileName].count;
+                    });
+
+                    // Update 3D missile models
+                    attachMissilesToPlane(plane);
+                }
+            });
+        })
+        .catch((error) => console.error("Error synchronizing missile states:", error));
+}
+
+// Poll the server for missile states every 2 seconds
+setInterval(synchronizeMissileStates, 2000);
+function resupplyMissiles() {
+    if (!currentPlane) {
+        console.log("You are not flying a supported plane. Resupply aborted.");
+        return;
+    }
+
+    Object.keys(currentPlane.missiles).forEach((missileName) => {
+        const missileConfig = currentPlane.missiles[missileName];
+        missileConfig.count = missileConfig.initialCount; // Reset to initial count
+    });
+
+    console.log("Missiles resupplied!");
+    attachMissilesToPlane(currentPlane); // Reattach 3D missiles to the plane
+
+    // Broadcast resupply event to the server
+    const resupplyEvent = {
+        type: "resupply",
+        playerId: generatePlayerId(),
+        timestamp: Date.now(),
+    };
+
+    fetch(`${serverUrl}/resupply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(resupplyEvent),
+    })
+        .then((response) => response.json())
+        .then((data) => console.log("Resupply event sent:", data))
+        .catch((error) => console.error("Error sending resupply event:", error));
+}
+function handleIncomingEvents() {
+    fetch(`${serverUrl}/events`)
+        .then((response) => response.json())
+        .then((events) => {
+            events.forEach((event) => {
+                if (event.type === "missile-launch") {
+                    const plane = players[event.playerId]?.plane;
+                    if (plane) {
+                        // Update missile count
+                        plane.missiles[event.missileName].count = event.remainingCount;
+
+                        // Update 3D missile models
+                        removeMissileFromPlane(plane, event.missileName);
+
+                        // Render the missile for other players
+                        launchMissile3D(event.position, event.targetPosition, {
+                            speed: plane.missiles[event.missileName].speed,
+                            range: plane.missiles[event.missileName].range,
+                            damage: plane.missiles[event.missileName].damage,
+                            tracking: plane.missiles[event.missileName].tracking,
+                        });
+                    }
+                } else if (event.type === "resupply") {
+                    const plane = players[event.playerId]?.plane;
+                    if (plane) {
+                        // Reset missile counts
+                        Object.keys(plane.missiles).forEach((missileName) => {
+                            plane.missiles[missileName].count = plane.missiles[missileName].initialCount;
+                        });
+
+                        // Update 3D missile models
+                        attachMissilesToPlane(plane);
+                    }
+                }
+            });
+        })
+        .catch((error) => console.error("Error handling incoming events:", error));
+}
+
+// Poll the server for incoming events every 2 seconds
+setInterval(handleIncomingEvents, 2000);
